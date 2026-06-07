@@ -15,14 +15,14 @@ git commit -m "Initial commit: DevConnect developer social platform"
 echo.
 echo Adding remote...
 git remote remove origin 2>nul
-git remote add origin https://github.com/kartikjaywantsonawane/devconnect.git
+git remote add origin https://github.com/kartikjsonawane/devconnect.git
 
 echo Pushing to GitHub...
 git push -u origin main
 
 echo.
 if %ERRORLEVEL% == 0 (
-    echo SUCCESS! Code is live at: https://github.com/kartikjaywantsonawane/devconnect
+    echo SUCCESS! Code is live at: https://github.com/kartikjsonawane/devconnect
 ) else (
     echo Push failed. Check the error above.
 )
