@@ -7,7 +7,7 @@ const createLimiter = (windowMs, max, message) => {
   }
   return rateLimit({
     windowMs,
-    max,
+    max,h
     standardHeaders: true,
     legacyHeaders: false,
     handler: (req, res) => {
@@ -20,7 +20,7 @@ const createLimiter = (windowMs, max, message) => {
 const apiLimiter = createLimiter(15 * 60 * 1000, 100, 'Too many requests, please try again later');
 
 // Auth routes: 10 attempts per 15 minutes
-const authLimiter = createLimiter(15 * 60 * 1000, 10, 'Too many authentication attempts, please wait before trying again');
+const authLimiter = createLimiter(15 * 60 * 1000, 50, 'Too many authentication attempts, please wait before trying again');
 
 // Upload limiter
 const uploadLimiter = createLimiter(60 * 60 * 1000, 20, 'Upload limit reached, please try again in an hour');
