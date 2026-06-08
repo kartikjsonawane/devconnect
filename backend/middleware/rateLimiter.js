@@ -17,7 +17,7 @@ const createLimiter = (windowMs, max, message) => {
 };
 
 // General API limiter: 100 requests per 15 minutes
-const apiLimiter = createLimiter(15 * 60 * 1000, 100, 'Too many requests, please try again later');
+const apiLimiter = createLimiter(15 * 60 * 1000, 1000, 'Too many requests, please try again later');
 
 // Auth routes: 10 attempts per 15 minutes
 const authLimiter = createLimiter(15 * 60 * 1000, 50, 'Too many authentication attempts, please wait before trying again');
