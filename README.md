@@ -1,5 +1,8 @@
 <div align="center">
 
+> 🌐 **Live App:** https://devconnect-sigma-one.vercel.app
+> 🚀 **Live API:** https://devconnect-07gi.onrender.com
+
 # DevConnect
 
 **A full-stack social platform built for developers.**
