@@ -7,7 +7,7 @@ const createLimiter = (windowMs, max, message) => {
   }
   return rateLimit({
     windowMs,
-    max,h
+    max,
     standardHeaders: true,
     legacyHeaders: false,
     handler: (req, res) => {
