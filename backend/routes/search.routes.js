@@ -15,23 +15,34 @@ router.get('/', optionalAuth, async (req, res, next) => {
     const skip = (page - 1) * limit;
     const results = {};
 
+    const regex = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+
     if (type === 'users' || type === 'all') {
-      results.users = await User.find(
-        { $text: { $search: q }, isActive: true },
-        { score: { $meta: 'textScore' } }
-      )
-        .sort({ score: { $meta: 'textScore' } })
+      results.users = await User.find({
+        isActive: true,
+        $or: [
+          { name: regex },
+          { username: regex },
+          { headline: regex },
+          { bio: regex },
+          { 'skills.name': regex },
+        ],
+      })
+        .sort({ followersCount: -1 })
         .skip(skip)
         .limit(parseInt(limit))
         .select('name username avatar headline skills followersCount');
     }
 
     if (type === 'posts' || type === 'all') {
-      results.posts = await Post.find(
-        { $text: { $search: q }, visibility: 'public' },
-        { score: { $meta: 'textScore' } }
-      )
-        .sort({ score: { $meta: 'textScore' } })
+      results.posts = await Post.find({
+        visibility: 'public',
+        $or: [
+          { content: regex },
+          { tags: regex },
+        ],
+      })
+        .sort({ createdAt: -1 })
         .skip(skip)
         .limit(parseInt(limit))
         .populate('author', 'name username avatar');

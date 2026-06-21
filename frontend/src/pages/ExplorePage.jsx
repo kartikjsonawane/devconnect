@@ -43,7 +43,7 @@ export default function ExplorePage() {
 
   const handleConnect = async (userId) => {
     try {
-      await connectionAPI.sendRequest({ userId });
+      await connectionAPI.sendRequest({ receiverId: userId });
       setConnectedMap(p => ({ ...p, [userId]: true }));
       toast.success('Connection request sent!');
     } catch {
