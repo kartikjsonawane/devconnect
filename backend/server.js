@@ -31,6 +31,8 @@ const aiRoutes = require('./routes/ai.routes');
 connectDB();
 
 const app = express();
+// Trust Render's proxy so rate-limiter sees real client IPs, not Render's internal IP
+app.set('trust proxy', 1);
 const httpServer = http.createServer(app);
 
 // Socket.io setup
