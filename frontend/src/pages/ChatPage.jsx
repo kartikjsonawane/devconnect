@@ -29,13 +29,24 @@ export default function ChatPage() {
 
   // Open conversation from navigation state (e.g. from Connections page)
   useEffect(() => {
-    if (location.state?.userId && conversations.length) {
+    if (location.state?.userId && !loading) {
       const existing = conversations.find(c =>
         c.participants.some(p => p._id === location.state.userId)
       );
-      if (existing) openConversation(existing);
+      if (existing) {
+        openConversation(existing);
+      } else {
+        // No existing conversation — create/get one via API
+        chatAPI.startConversation(location.state.userId).then((res) => {
+          const conv = res.data.conversation;
+          if (conv) {
+            setConversations(p => p.some(c => c._id === conv._id) ? p : [conv, ...p]);
+            openConversation(conv);
+          }
+        }).catch(() => {});
+      }
     }
-  }, [location.state, conversations]);
+  }, [location.state, loading]);
 
   useEffect(() => {
     if (socket) {
@@ -97,7 +108,7 @@ export default function ChatPage() {
     const content = text;
     setText('');
     try {
-      await chatAPI.sendMessage(activeConv._id, content);
+      await chatAPI.sendMessage(activeConv._id, { content });
     } catch {
       setText(content);
       toast.error('Failed to send');

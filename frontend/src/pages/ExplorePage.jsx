@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Compass, TrendingUp, Users, Hash } from 'lucide-react';
-import { postAPI, userAPI } from '@/services/api';
+import { Compass, TrendingUp, Users, Hash, UserPlus, UserCheck } from 'lucide-react';
+import { postAPI, userAPI, connectionAPI } from '@/services/api';
 import PostCard from '@/components/post/PostCard';
 import Avatar from '@/components/common/Avatar';
 import { PostSkeleton, UserCardSkeleton } from '@/components/common/SkeletonLoader';
@@ -21,6 +21,7 @@ export default function ExplorePage() {
   const [loading, setLoading] = useState(true);
   const [selectedSkill, setSelectedSkill] = useState(null);
   const [followingMap, setFollowingMap] = useState({});
+  const [connectedMap, setConnectedMap] = useState({});
 
   useEffect(() => {
     if (tab === 'trending') fetchTrending();
@@ -40,11 +41,21 @@ export default function ExplorePage() {
     }
   };
 
+  const handleConnect = async (userId) => {
+    try {
+      await connectionAPI.sendRequest({ userId });
+      setConnectedMap(p => ({ ...p, [userId]: true }));
+      toast.success('Connection request sent!');
+    } catch {
+      toast.error('Could not send request');
+    }
+  };
+
   const fetchDevelopers = async () => {
     setLoading(true);
     try {
-      const res = await userAPI.getTrendingDevelopers();
-      setDevelopers(res.data.developers || []);
+      const res = await userAPI.getTrending();
+      setDevelopers(res.data.users || []);
     } catch {
       toast.error('Failed to load developers');
     } finally {
@@ -175,13 +186,21 @@ export default function ExplorePage() {
                     </div>
                   )}
                 </div>
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 flex gap-2">
+                  <button
+                    onClick={() => handleConnect(dev._id)}
+                    disabled={connectedMap[dev._id]}
+                    className={`text-sm px-3 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1 ${
+                      connectedMap[dev._id] ? 'btn-secondary opacity-60' : 'btn-secondary'
+                    }`}
+                    title="Send connection request"
+                  >
+                    {connectedMap[dev._id] ? <UserCheck size={14} /> : <UserPlus size={14} />}
+                  </button>
                   <button
                     onClick={() => handleFollow(dev._id)}
                     className={`text-sm px-4 py-1.5 rounded-lg font-medium transition-all ${
-                      followingMap[dev._id]
-                        ? 'btn-secondary'
-                        : 'btn-primary'
+                      followingMap[dev._id] ? 'btn-secondary' : 'btn-primary'
                     }`}
                   >
                     {followingMap[dev._id] ? 'Following' : 'Follow'}
