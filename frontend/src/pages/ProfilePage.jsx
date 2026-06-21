@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { MapPin, Link2, Github, Twitter, Edit3, UserPlus, UserMinus, MessageSquare, Star, Briefcase, Calendar } from 'lucide-react';
+import { MapPin, Link2, Github, Twitter, Edit3, UserPlus, UserMinus, UserCheck, MessageSquare, Star, Briefcase, Calendar } from 'lucide-react';
 import { userAPI, postAPI, followAPI, connectionAPI } from '../services/api';
 import { useAuthStore } from '../store/authStore';
 import PostCard from '../components/post/PostCard';
@@ -15,6 +15,7 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState(null);
   const [posts, setPosts] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [connStatus, setConnStatus] = useState(null); // null | 'pending' | 'accepted'
   const [activeTab, setActiveTab] = useState('posts');
   const [loading, setLoading] = useState(true);
 
@@ -25,12 +26,28 @@ export default function ProfilePage() {
     userAPI.getProfile(username).then((profileData) => {
       setProfile(profileData.data.user);
       setIsFollowing(profileData.data.isFollowing);
-      // Fetch posts separately so a missing route doesn't break the profile
       return postAPI.getUserPosts?.(username, { limit: 20 }) || Promise.resolve({ data: { posts: [] } });
     }).then((postsData) => {
       setPosts(postsData?.data?.posts || []);
     }).catch(() => {}).finally(() => setLoading(false));
+
+
   }, [username]);
+
+  const handleConnect = async () => {
+    try {
+      await connectionAPI.sendRequest({ receiverId: profile._id });
+      setConnStatus('pending');
+      toast.success('Connection request sent!');
+    } catch (err) {
+      if (err?.statusCode === 409 || err?.message?.toLowerCase().includes('pending') || err?.message?.toLowerCase().includes('connected')) {
+        setConnStatus('pending');
+        toast('Request already sent', { icon: '✓' });
+      } else {
+        toast.error(err?.message || 'Could not send request');
+      }
+    }
+  };
 
   const handleFollow = async () => {
     try {
@@ -92,6 +109,13 @@ export default function ProfilePage() {
                 <Link to="/chat" state={{ userId: profile._id }} className="btn-secondary text-sm py-2">
                   <MessageSquare size={15} />Message
                 </Link>
+                <button onClick={handleConnect}
+                  disabled={connStatus === 'pending' || connStatus === 'accepted'}
+                  className="btn-secondary text-sm py-2 disabled:opacity-60">
+                  {connStatus === 'accepted' ? <><UserCheck size={15} />Connected</> :
+                   connStatus === 'pending'   ? <><UserCheck size={15} />Requested</> :
+                                               <><UserPlus size={15} />Connect</>}
+                </button>
                 <button onClick={handleFollow}
                   className={isFollowing ? 'btn-secondary text-sm py-2' : 'btn-primary text-sm py-2'}>
                   {isFollowing ? <><UserMinus size={15} />Unfollow</> : <><UserPlus size={15} />Follow</>}

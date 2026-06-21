@@ -70,18 +70,25 @@ exports.searchUsers = asyncHandler(async (req, res) => {
   const query = { isActive: true };
 
   if (q) {
-    query.$text = { $search: q };
+    const regex = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+    query.$or = [
+      { name: regex },
+      { username: regex },
+      { headline: regex },
+      { bio: regex },
+      { 'skills.name': regex },
+    ];
   }
 
   if (skills) {
     const skillsArray = skills.split(',').map((s) => s.trim().toLowerCase());
-    query.skills = { $in: skillsArray };
+    query['skills.name'] = { $in: skillsArray };
   }
 
   const [users, total] = await Promise.all([
     User.find(query)
-      .select('name username avatar headline skills techStack followersCount openToWork isOnline')
-      .sort(q ? { score: { $meta: 'textScore' } } : { followersCount: -1 })
+      .select('name username avatar headline skills followersCount openToWork isOnline')
+      .sort({ followersCount: -1 })
       .skip(skip)
       .limit(parseInt(limit)),
     User.countDocuments(query),
