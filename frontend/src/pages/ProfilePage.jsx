@@ -22,13 +22,13 @@ export default function ProfilePage() {
 
   useEffect(() => {
     setLoading(true);
-    Promise.all([
-      userAPI.getProfile(username),
-      postAPI.getUserPosts?.(username, { limit: 20 }) || Promise.resolve({ data: { posts: [] } }),
-    ]).then(([profileData, postsData]) => {
+    userAPI.getProfile(username).then((profileData) => {
       setProfile(profileData.data.user);
       setIsFollowing(profileData.data.isFollowing);
-      setPosts(postsData.data.posts || []);
+      // Fetch posts separately so a missing route doesn't break the profile
+      return postAPI.getUserPosts?.(username, { limit: 20 }) || Promise.resolve({ data: { posts: [] } });
+    }).then((postsData) => {
+      setPosts(postsData?.data?.posts || []);
     }).catch(() => {}).finally(() => setLoading(false));
   }, [username]);
 

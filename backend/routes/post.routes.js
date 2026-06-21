@@ -8,6 +8,7 @@ const { uploadPostImage } = require('../config/cloudinary');
 router.get('/feed', protect, postController.getFeed);
 router.get('/explore', optionalAuth, postController.getExplorePosts);
 router.get('/bookmarks', protect, postController.getBookmarks);
+router.get('/user/:username', optionalAuth, postController.getUserPosts);
 router.post('/', protect, uploadPostImage.array('images', 4), postController.createPost);
 router.get('/:postId', optionalAuth, postController.getPost);
 router.put('/:postId', protect, postController.updatePost);
