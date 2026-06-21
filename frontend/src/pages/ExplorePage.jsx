@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Compass, TrendingUp, Users, Hash, UserPlus, UserCheck } from 'lucide-react';
-import { postAPI, userAPI, connectionAPI } from '@/services/api';
+import { postAPI, userAPI, connectionAPI, followAPI } from '@/services/api';
 import PostCard from '@/components/post/PostCard';
 import Avatar from '@/components/common/Avatar';
 import { PostSkeleton, UserCardSkeleton } from '@/components/common/SkeletonLoader';
@@ -41,13 +41,32 @@ export default function ExplorePage() {
     }
   };
 
+  // Load existing pending/accepted connections so button reflects real state
+  useEffect(() => {
+    connectionAPI.getConnections().then(res => {
+      const map = {};
+      (res.data.connections || []).forEach(u => { map[u._id] = true; });
+      setConnectedMap(map);
+    }).catch(() => {});
+    connectionAPI.getPendingRequests().then(res => {
+      // Mark users we've sent requests to (they won't appear in our pending list,
+      // but a failed 409 will also mark them)
+    }).catch(() => {});
+  }, []);
+
   const handleConnect = async (userId) => {
     try {
       await connectionAPI.sendRequest({ receiverId: userId });
       setConnectedMap(p => ({ ...p, [userId]: true }));
       toast.success('Connection request sent!');
-    } catch {
-      toast.error('Could not send request');
+    } catch (err) {
+      // 409 = already sent/connected — still mark as sent in UI
+      if (err?.statusCode === 409 || err?.message?.toLowerCase().includes('pending') || err?.message?.toLowerCase().includes('connected')) {
+        setConnectedMap(p => ({ ...p, [userId]: true }));
+        toast('Already connected or request pending', { icon: '✓' });
+      } else {
+        toast.error(err?.message || 'Could not send request');
+      }
     }
   };
 

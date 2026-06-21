@@ -89,7 +89,7 @@ export default function ProfilePage() {
               </Link>
             ) : (
               <>
-                <Link to={`/chat`} className="btn-secondary text-sm py-2">
+                <Link to="/chat" state={{ userId: profile._id }} className="btn-secondary text-sm py-2">
                   <MessageSquare size={15} />Message
                 </Link>
                 <button onClick={handleFollow}
