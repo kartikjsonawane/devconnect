@@ -61,7 +61,7 @@ export default function ChatPage() {
   const fetchConversations = async () => {
     try {
       const res = await chatAPI.getConversations();
-      setConversations(res.data.data.conversations || []);
+      setConversations(res.data.conversations || []);
     } catch {
       toast.error('Failed to load conversations');
     } finally {
@@ -73,7 +73,7 @@ export default function ChatPage() {
     setActiveConv(conv);
     try {
       const res = await chatAPI.getMessages(conv._id);
-      setMessages(res.data.data.messages || []);
+      setMessages(res.data.messages || []);
       socket?.emit('chat:join', conv._id);
     } catch {
       toast.error('Failed to load messages');

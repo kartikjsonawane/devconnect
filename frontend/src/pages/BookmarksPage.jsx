@@ -13,7 +13,7 @@ export default function BookmarksPage() {
     (async () => {
       try {
         const res = await postAPI.getBookmarks();
-        setPosts(res.data.data.posts || []);
+        setPosts(res.data.posts || []);
       } catch {
         toast.error('Failed to load bookmarks');
       } finally {

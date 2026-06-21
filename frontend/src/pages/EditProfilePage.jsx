@@ -76,7 +76,7 @@ export default function EditProfilePage() {
     setAvatarUploading(true);
     try {
       const res = await userAPI.uploadAvatar(data);
-      updateUser({ avatar: res.data.data.avatar });
+      updateUser({ avatar: res.data.avatar });
       toast.success('Avatar updated!');
     } catch {
       toast.error('Failed to upload avatar');
@@ -156,7 +156,7 @@ export default function EditProfilePage() {
         projects: form.projects,
       };
       const res = await userAPI.updateProfile(payload);
-      updateUser(res.data.data.user);
+      updateUser(res.data.user);
       toast.success('Profile saved!');
       navigate(`/profile/${user.username}`);
     } catch (err) {

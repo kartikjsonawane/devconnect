@@ -120,8 +120,8 @@ export default function PostPage() {
         postAPI.getPost(id),
         commentAPI.getComments(id),
       ]);
-      setPost(postRes.data.data.post);
-      setComments(commentsRes.data.data.comments || []);
+      setPost(postRes.data.post);
+      setComments(commentsRes.data.comments || []);
     } catch {
       toast.error('Post not found');
     } finally {
@@ -136,7 +136,7 @@ export default function PostPage() {
     setCommentText('');
     try {
       const res = await commentAPI.createComment(id, { content });
-      setComments(p => [res.data.data.comment, ...p]);
+      setComments(p => [res.data.comment, ...p]);
     } catch {
       setCommentText(content);
       toast.error('Failed to post comment');
@@ -148,7 +148,7 @@ export default function PostPage() {
   const handleReply = async (parentId, content) => {
     try {
       const res = await commentAPI.createComment(id, { content, parentComment: parentId });
-      const newReply = res.data.data.comment;
+      const newReply = res.data.comment;
       setComments(p => p.map(c =>
         c._id === parentId
           ? { ...c, replies: [...(c.replies || []), newReply] }

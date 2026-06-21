@@ -28,8 +28,8 @@ export default function ConnectionsPage() {
         connectionAPI.getPendingRequests(),
         connectionAPI.getConnections(),
       ]);
-      setPending(pendRes.data.data.requests || []);
-      setConnections(connRes.data.data.connections || []);
+      setPending(pendRes.data.requests || []);
+      setConnections(connRes.data.connections || []);
     } catch {
       toast.error('Failed to load connections');
     } finally {

@@ -38,7 +38,7 @@ export default function AnalyticsPage() {
     (async () => {
       try {
         const res = await userAPI.getProfileAnalytics();
-        setAnalytics(res.data.data);
+        setAnalytics(res.data);
       } catch {
         toast.error('Failed to load analytics');
       } finally {

@@ -31,8 +31,8 @@ export default function ExplorePage() {
     setLoading(true);
     try {
       const params = selectedSkill ? { tags: selectedSkill } : {};
-      const res = await postAPI.getExplorePosts({ ...params, limit: 20 });
-      setPosts(res.data.data.posts || []);
+      const res = await postAPI.getExplore({ ...params, limit: 20 });
+      setPosts(res.data.posts || []);
     } catch {
       toast.error('Failed to load trending posts');
     } finally {
@@ -44,7 +44,7 @@ export default function ExplorePage() {
     setLoading(true);
     try {
       const res = await userAPI.getTrendingDevelopers();
-      setDevelopers(res.data.data.developers || []);
+      setDevelopers(res.data.developers || []);
     } catch {
       toast.error('Failed to load developers');
     } finally {
