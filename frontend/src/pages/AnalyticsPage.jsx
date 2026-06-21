@@ -83,7 +83,7 @@ export default function AnalyticsPage() {
         <StatCard icon={Eye} label="Profile Views" value={analytics?.profileViews?.toLocaleString() ?? 0} />
         <StatCard icon={Users} label="Followers" value={user?.followersCount ?? 0} color="text-violet-400" bg="bg-violet-500/10" />
         <StatCard icon={Heart} label="Total Likes" value={analytics?.totalLikes ?? 0} color="text-red-400" bg="bg-red-500/10" />
-        <StatCard icon={TrendingUp} label="Posts Published" value={analytics?.totalPosts ?? 0} color="text-emerald-400" bg="bg-emerald-500/10" />
+        <StatCard icon={TrendingUp} label="Posts Published" value={analytics?.postsCount ?? 0} color="text-emerald-400" bg="bg-emerald-500/10" />
       </div>
 
       {/* Profile views over time */}
