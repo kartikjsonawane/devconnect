@@ -26,6 +26,7 @@ const connectionRoutes = require('./routes/connection.routes');
 const chatRoutes = require('./routes/chat.routes');
 const searchRoutes = require('./routes/search.routes');
 const aiRoutes = require('./routes/ai.routes');
+const adminSeedRoutes = require('./routes/adminSeed.routes');
 
 // Connect to MongoDB
 connectDB();
@@ -88,6 +89,7 @@ app.use('/api/v1/connections', connectionRoutes);
 app.use('/api/v1/chat', chatRoutes);
 app.use('/api/v1/search', searchRoutes);
 app.use('/api/v1/ai', aiRoutes);
+app.use('/api/v1/admin/seed', adminSeedRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {
