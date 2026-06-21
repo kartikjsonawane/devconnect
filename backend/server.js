@@ -89,6 +89,21 @@ app.use('/api/v1/chat', chatRoutes);
 app.use('/api/v1/search', searchRoutes);
 app.use('/api/v1/ai', aiRoutes);
 
+// Temporary seed route — fires seed.js against the live Atlas DB
+app.post('/api/v1/admin/seed', async (req, res) => {
+  try {
+    const { execFile } = require('child_process');
+    const path = require('path');
+    const seedPath = path.join(__dirname, 'seed.js');
+    execFile('node', [seedPath], { timeout: 120000 }, (err, stdout, stderr) => {
+      if (err) return res.status(500).json({ success: false, error: err.message, stderr });
+      res.json({ success: true, output: stdout });
+    });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({ success: false, message: `Route ${req.originalUrl} not found` });
